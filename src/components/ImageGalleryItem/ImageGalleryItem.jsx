@@ -6,6 +6,7 @@ export class ImageGalleryItem extends React.Component {
 	state = {
 		gallery: null,
 		loading: false,
+		bigImg: ''
 	}
 
 	async componentDidMount() {
@@ -27,13 +28,21 @@ export class ImageGalleryItem extends React.Component {
 		}
 	}
 
+	handleClick = e => {
+		const targetImg = this.state.gallery.hits.find(item => item.id === Number(e.currentTarget.id))
+
+		this.props.handleModalcontent(targetImg)
+		this.props.onClick();
+	}
+
 	render() {
 		const { gallery, loading } = this.state;
+
 		return (
 			<>
 				{loading && <ThreeDots />}
 				{this.state.gallery && gallery.hits.map(item => {
-					return <GalleryItem key={item.id}>
+					return <GalleryItem onClick={this.handleClick} key={item.id} id={item.id}>
 						<GalleryImg src={item.webformatURL} alt={item.tags} />
 					</GalleryItem>
 				})}
