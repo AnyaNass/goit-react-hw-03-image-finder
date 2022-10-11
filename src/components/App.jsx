@@ -5,6 +5,7 @@ import { Modal } from './Modal/Modal';
 import * as API from './services/api'
 import { ErrorMessage } from './ErrorMessage/ErrorMessage'
 import { ThreeDots } from 'react-loader-spinner'
+import { LoadMoreBtn } from './Button/Button'
 
 export class App extends React.Component {
 	state = {
@@ -13,6 +14,7 @@ export class App extends React.Component {
 		page: 1,
 		error: false,
 		loading: false,
+		loadMoreBtn: false,
 		showModal: false,
 		modalImg: '',
 		tags: '',
@@ -27,7 +29,7 @@ export class App extends React.Component {
 					throw new Error();
 				}
 
-				this.setState(prevState => ({ gallery: [...prevState.gallery, ...response.hits] }))
+				this.setState(prevState => ({ gallery: [...prevState.gallery, ...response.hits], loading: false, loadMoreBtn: true }))
 			} catch (error) {
 				this.setState({ error: true, gallery: [], loading: false })
 			}
@@ -41,10 +43,10 @@ export class App extends React.Component {
 			if (gallery.total === 0) {
 				throw new Error();
 			}
-			this.setState({ gallery: gallery.hits, loading: false })
+			this.setState({ gallery: gallery.hits, loading: false, loadMoreBtn: true })
 		}
 		catch (error) {
-			this.setState({ error: true, gallery: [], loading: false })
+			this.setState({ error: true, gallery: [], loading: false, loadMoreBtn: false })
 		}
 	}
 
@@ -62,12 +64,12 @@ export class App extends React.Component {
 	}
 
 	loadMore = () => {
-		this.setState(prevState => ({ page: prevState.page + 1 }))
+		this.setState(prevState => ({ page: prevState.page + 1, loading: true, loadMoreBtn: false }))
 	}
 
 	render() {
 		// console.log(this.state.page);
-		const { error, searchQuery, gallery, loading, showModal, modalImg, tags } = this.state;
+		const { error, searchQuery, gallery, loading, showModal, modalImg, tags, loadMoreBtn } = this.state;
 		// console.log(gallery);
 		return (<>
 			<Searchbar onSubmit={this.handleFormSubmit} />
@@ -75,9 +77,9 @@ export class App extends React.Component {
 				<img src={modalImg} alt={tags} />
 			</Modal>)}
 			{error && <ErrorMessage message={`We haven't found anything for your search "${searchQuery}"`} />}
-			{gallery && <ImageGallery gallery={gallery} onClick={this.toggleModal} handleModalcontent={this.handleModalcontent} />}
-			{loading && <ThreeDots />}
-			<button onClick={this.loadMore}>Load more</button>
+			{gallery.length !== 0 && <ImageGallery gallery={gallery} onClick={this.toggleModal} handleModalcontent={this.handleModalcontent} />}
+			{loading && <ThreeDots color="red" wrapperStyle={{ justifyContent: "center" }} />}
+			{loadMoreBtn && <LoadMoreBtn onClick={this.loadMore}></LoadMoreBtn>}
 		</>
 		)
 	}
