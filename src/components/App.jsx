@@ -9,7 +9,7 @@ import { ThreeDots } from 'react-loader-spinner'
 export class App extends React.Component {
 	state = {
 		searchQuery: '',
-		gallery: null,
+		gallery: [],
 		page: 1,
 		error: false,
 		loading: false,
@@ -18,9 +18,21 @@ export class App extends React.Component {
 		tags: '',
 	}
 
-	//  componentDidUpdate(prevProps, prevState) {
+	async componentDidUpdate(prevProps, prevState) {
+		if (prevState.page !== this.state.page) {
+			try {
+				const response = await API.getImages(this.state.searchQuery, this.state.page)
 
-	// }
+				if (response.total === 0) {
+					throw new Error();
+				}
+
+				this.setState(prevState => ({ gallery: [...prevState.gallery, ...response.hits] }))
+			} catch (error) {
+				this.setState({ error: true, gallery: [], loading: false })
+			}
+		}
+	}
 
 	handleFormSubmit = async searchQuery => {
 		this.setState({ searchQuery, error: false, loading: true });
@@ -29,10 +41,10 @@ export class App extends React.Component {
 			if (gallery.total === 0) {
 				throw new Error();
 			}
-			this.setState({ gallery, loading: false })
+			this.setState({ gallery: gallery.hits, loading: false })
 		}
 		catch (error) {
-			this.setState({ error: true, gallery: null, loading: false })
+			this.setState({ error: true, gallery: [], loading: false })
 		}
 	}
 
@@ -54,9 +66,9 @@ export class App extends React.Component {
 	}
 
 	render() {
-
+		// console.log(this.state.page);
 		const { error, searchQuery, gallery, loading, showModal, modalImg, tags } = this.state;
-		console.log(gallery);
+		// console.log(gallery);
 		return (<>
 			<Searchbar onSubmit={this.handleFormSubmit} />
 			{showModal && (<Modal onClose={this.toggleModal} >
