@@ -27,7 +27,7 @@ export class Searchbar extends React.Component {
 		return <Header>
 			<SearchForm onSubmit={this.handleSubmit}>
 				<SearchFormBtn type="submit">
-					<span>Search</span>
+					<span>🔍</span>
 				</SearchFormBtn>
 
 				<SearchFormInput

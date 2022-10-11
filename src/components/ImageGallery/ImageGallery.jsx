@@ -1,5 +1,7 @@
 import { GalleryList } from './ImageGallery.styled'
+import { ImageGalleryItem } from '../ImageGalleryItem/ImageGalleryItem'
 
-export const ImageGallery = ({ children }) => {
-	return <GalleryList>{children}</GalleryList>
+export const ImageGallery = ({ gallery, ...otherProps }) => {
+	return <GalleryList><ImageGalleryItem gallery={gallery} {...otherProps} /></GalleryList>
 }
+
