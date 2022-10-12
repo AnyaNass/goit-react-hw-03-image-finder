@@ -1,7 +1,6 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { GalleryItem, GalleryImg } from './ImageGalleryItem.styled'
-
-
 
 export class ImageGalleryItem extends React.Component {
 
@@ -21,4 +20,9 @@ export class ImageGalleryItem extends React.Component {
 			</GalleryItem>
 		})
 	}
+}
+
+ImageGalleryItem.propTypes = {
+	onClick: PropTypes.func,
+	handleModalcontent: PropTypes.func,
 }
