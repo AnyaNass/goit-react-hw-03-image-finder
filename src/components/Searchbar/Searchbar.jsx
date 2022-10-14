@@ -1,5 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { FaSearch } from "react-icons/fa";
+// FaSearch
 import { Header, SearchForm, SearchFormBtn, SearchFormInput } from './Searchbar.styled'
 
 export class Searchbar extends React.Component {
@@ -28,7 +30,7 @@ export class Searchbar extends React.Component {
 		return <Header>
 			<SearchForm onSubmit={this.handleSubmit}>
 				<SearchFormBtn type="submit">
-					<span>🔍</span>
+					<FaSearch />
 				</SearchFormBtn>
 
 				<SearchFormInput

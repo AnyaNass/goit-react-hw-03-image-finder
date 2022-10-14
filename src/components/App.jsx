@@ -6,12 +6,14 @@ import * as API from './services/api'
 import { ErrorMessage } from './ErrorMessage/ErrorMessage'
 import { ThreeDots } from 'react-loader-spinner'
 import { LoadMoreBtn } from './Button/Button'
+import { DefaultAlert } from './DefaultAlert/DefaultAlert'
 
 export class App extends React.Component {
 	state = {
 		searchQuery: '',
 		gallery: [],
 		page: 1,
+		totalPages: 0,
 		error: false,
 		loading: false,
 		loadMoreBtn: false,
@@ -40,10 +42,11 @@ export class App extends React.Component {
 		this.setState({ searchQuery, error: false, loading: true });
 		try {
 			const gallery = await API.getImages(searchQuery);
+
 			if (gallery.total === 0) {
 				throw new Error();
 			}
-			this.setState({ gallery: gallery.hits, loading: false, loadMoreBtn: true })
+			this.setState({ gallery: gallery.hits, loading: false, loadMoreBtn: true, totalPages: Math.ceil(gallery.totalHits / gallery.hits.length) })
 		}
 		catch (error) {
 			this.setState({ error: true, gallery: [], loading: false, loadMoreBtn: false })
@@ -68,9 +71,8 @@ export class App extends React.Component {
 	}
 
 	render() {
-		// console.log(this.state.page);
-		const { error, searchQuery, gallery, loading, showModal, modalImg, tags, loadMoreBtn } = this.state;
-		// console.log(gallery);
+		const { error, searchQuery, gallery, loading, showModal, modalImg, tags, loadMoreBtn, page, totalPages } = this.state;
+
 		return (<>
 			<Searchbar onSubmit={this.handleFormSubmit} />
 			{showModal && (<Modal onClose={this.toggleModal} >
@@ -78,8 +80,9 @@ export class App extends React.Component {
 			</Modal>)}
 			{error && <ErrorMessage message={`We haven't found anything for your search "${searchQuery}"`} />}
 			{gallery.length !== 0 && <ImageGallery gallery={gallery} onClick={this.toggleModal} handleModalcontent={this.handleModalcontent} />}
-			{loading && <ThreeDots color="red" wrapperStyle={{ justifyContent: "center" }} />}
-			{loadMoreBtn && <LoadMoreBtn onClick={this.loadMore}></LoadMoreBtn>}
+			{loading && <ThreeDots color="black" wrapperStyle={{ justifyContent: "center" }} />}
+			{loadMoreBtn && page !== totalPages && <LoadMoreBtn onClick={this.loadMore}></LoadMoreBtn>}
+			{page === totalPages && !error && <DefaultAlert text="That is all" />}
 		</>
 		)
 	}
