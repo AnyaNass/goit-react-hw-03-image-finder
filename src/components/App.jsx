@@ -23,6 +23,12 @@ export class App extends React.Component {
 	}
 
 	async componentDidUpdate(prevProps, prevState) {
+		if (this.state.showModal) {
+			document.querySelector("body").style.overflow = 'hidden';
+		} else {
+			document.querySelector("body").style.overflow = 'auto';
+		}
+
 		if (prevState.page !== this.state.page) {
 			try {
 				const response = await API.getImages(this.state.searchQuery, this.state.page)
@@ -56,7 +62,7 @@ export class App extends React.Component {
 	toggleModal = () => {
 		this.setState(state => ({
 			showModal: !state.showModal,
-		}))
+		}));
 	}
 
 	handleModalcontent = data => {
